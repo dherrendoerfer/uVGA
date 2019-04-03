@@ -1118,9 +1118,9 @@ uvga_error_t uVGA::dma_init()
 	AXBS_MGPCR1 = 0x00000001;
 	AXBS_MGPCR3 = 0x00000001;
 #if defined(__MK64FX512__) || defined(__MK66FX1M0__)
-	AXBS_MGPCR4 = 0x00000001;
-	AXBS_MGPCR5 = 0x00000001;
-	AXBS_MGPCR6 = 0x00000001;
+//	AXBS_MGPCR4 = 0x00000001;
+//	AXBS_MGPCR5 = 0x00000001;
+//	AXBS_MGPCR6 = 0x00000001;
 #endif
 
 	// give absolute priority to DMA on SRAM_L and favor DMA on SRAM_U
