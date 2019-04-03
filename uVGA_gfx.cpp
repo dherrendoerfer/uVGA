@@ -1324,6 +1324,14 @@ size_t uVGA::write(uint8_t c)
 						cursor_x = 0;
 						return 1;
 
+		case '\b':
+						if (cursor_x) {
+							cursor_x --;
+							write(' ');
+							cursor_x --;
+						}
+						return 1;
+
 		case '\n':
 						cursor_x = 0;
 						cursor_y ++;
