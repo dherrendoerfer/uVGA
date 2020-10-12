@@ -74,6 +74,12 @@ void uVGA::drawPixel(int x, int y, int color)
 	drawPixelFast(x, y, color);
 }
 
+// draw a single pixel. No Checking. Don't wait for DMA
+void uVGA::drawPixelNoSync(int x, int y, int color)
+{
+	drawPixelFast(x, y, color);
+}
+
 // draw a single pixel WITHOUT performing any clipping test
 inline void uVGA::drawPixelFast(int x, int y, int color)
 {
@@ -321,7 +327,7 @@ void uVGA::fillRect(int x0, int y0, int x1, int y1, int color)
 	gfx_dma->SLAST = 0;					// not pointer correction at end of major loop
 
 	gfx_dma->DADDR = frame_buffer + fb_row_stride * y0 + x0;		// destination is pixel (x0,y0) in the frame buffer
-	gfx_dma->DOFF = 1;					// after each 
+	gfx_dma->DOFF = 1;					// after each
 	gfx_dma->ATTR_DST = 0;				// destination data size = 1 byte
 	gfx_dma->CITER = width * height;	// major loop should copy the whole rectangle surface
 	gfx_dma->DLASTSGA = 0;				// no scatter/gather mode
@@ -407,7 +413,7 @@ void uVGA::drawBitmap(int16_t x_pos, int16_t y_pos, uint8_t *bitmap, int16_t bit
 	// here, (fx,fy) is the destination position in the image
 	//       (bx,by) is the position in the bitmap
 	//			(fw,fh) is the size to copy
-	
+
 	wait_idle_gfx_dma();
 
 	for(off_y = 0; off_y < fh; off_y++)
@@ -780,7 +786,7 @@ void uVGA::drawLine(int x0, int y0, int x1, int y1, int color, bool no_last_pixe
 			y0 += sign_y;
 		}
    } while ( (x0 != x1) || (y0 != y1) );
-	
+
 	// plot last line pixel;
 	if(!no_last_pixel)
 		drawPixel(x1, y1, color);
@@ -807,7 +813,7 @@ void uVGA::drawCircle(int xm, int ym, int r, int color)
 {
 	int x = -r;
 	int y = 0;
-	int err = 2-2*r; /* II. Quadrant */ 
+	int err = 2-2*r; /* II. Quadrant */
 
 	do
 	{
@@ -904,7 +910,7 @@ void uVGA::drawEllipse(int _x0, int _y0, int _x1, int _y1, int color)
 			y1--;
 			dy += a;
 			err += dy;
-		}  /* y step */ 
+		}  /* y step */
 		if((e2 >= dx) || (2*err > dy))
 		{
 			x0++;
@@ -913,13 +919,13 @@ void uVGA::drawEllipse(int _x0, int _y0, int _x1, int _y1, int color)
 			err += dx;
 		} /* x step */
 	} while (x0 <= x1);
-	
+
 	while ((y0 - y1) < b)
 	{  /* too early stop of flat ellipses a=1 */
 		drawPixel(x0 - 1, y0, color); /* -> finish tip of ellipse */
-		drawPixel(x1 + 1, y0++, color); 
+		drawPixel(x1 + 1, y0++, color);
 		drawPixel(x0 - 1, y1, color);
-		drawPixel(x1 + 1, y1--, color); 
+		drawPixel(x1 + 1, y1--, color);
 	}
 }
 
@@ -1052,7 +1058,7 @@ void uVGA::copy(int s_x, int s_y, int d_x, int d_y, int w, int h)
 		dypos = c_d_y;
 		dy = 1;
 	}
-		
+
 	if(c_d_x > c_s_x)
 	{
 		// copy from last line pixel
@@ -1291,8 +1297,8 @@ void uVGA::unsetPrintWindow()
 void uVGA::scrollPrintWindow()
 {
 	// move the 2nd line and the following ones one line up
-	Vscroll(print_window_x, print_window_y + font_height, 
-			print_window_w * font_width, (print_window_h - 1) * font_height, 
+	Vscroll(print_window_x, print_window_y + font_height,
+			print_window_w * font_width, (print_window_h - 1) * font_height,
 			-font_height,
 			background_color);
 }

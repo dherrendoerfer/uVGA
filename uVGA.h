@@ -153,7 +153,7 @@ public:
 	// disable frame buffer auto allocation using a static/pre-allocated one
 	// the frame buffer should be declared as:
 	// DMAMEM uint8_t my_frame_buffer[UVGA_FB_SIZE(image_width, image_height, repeat_line_factor)];
-	// or using 
+	// or using
 	void set_static_framebuffer(uint8_t *frame_buffer);
 
 	// display VGA image
@@ -183,6 +183,7 @@ public:
 	void clear(int color = 0);
 	int getPixel(int x, int y);
 	void drawPixel(int x, int y, int color);
+  void drawPixelNoSync(int x, int y, int color);
 	void drawRect(int x0, int y0, int x1, int y1, int color);
 	void fillRect(int x0, int y0, int x1, int y1, int color);
 	void drawLine(int x0, int y0, int x1, int y1, int color, bool no_last_pixel = false);
@@ -216,9 +217,9 @@ public:
 private:
 	DMAChannel dmachan1;
 	DMAChannel dmachan2;
-	DMAChannel dmachan3;	
+	DMAChannel dmachan3;
 
-	// 
+	//
 	bool clocks_autostart;
 	bool clocks_started;
 
@@ -278,13 +279,13 @@ private:
 	short x1_pin;
 
 	FTM_REGS_t *hftm;
-	
+
 	// vsync settings
 	short vsync_pin;			// pin sending Vsync signal
 	uint32_t vsync_bitmask;	// bit mask to use in GPIOx_P[SC]OR to set vsync signal
 	volatile uint32_t *vsync_gpio_no_sync_level;	// these 2 pointers are address of GPIOx_PSOR and GPIOx_PCOR
 	volatile uint32_t *vsync_gpio_sync_level;		// there ordre depends on the polarity of the vsync signal
-	
+
 
 	FTM_REGS_t *vftm;
 
@@ -325,7 +326,7 @@ private:
 	volatile uint8_t *sram_u_dma_fixmux;				// address of DMA channel multiplexer
 	volatile uint8_t *sram_u_dma_fixprio;				// address of DMA channel priority
 	DMABaseClass::TCD_t *sram_u_dma_fix_major_loop;// array of DMA transfer (minor loop) to process to build screen. array MUST BE 32 bytes aligned (eDMA requirement)
-	
+
 	// to reduce memory usage, all rows (any where in the code) are stored in this array
 	uint8_t *all_allocated_rows;				// it is the real address of all allocated rows
 	uint8_t *all_allocated_rows_aligned;	// this address is 16 bytes aligned
@@ -346,7 +347,7 @@ private:
 	uint8_t *frame_buffer;							// frame buffer address is the address used to perform drawing
 															// most of the time, these 3 address are identical
 															// however, they can be diffrent if frame buffer must be align on an address (DMA requirement) or if DMA uses a buffer containing video synchro
-															// 
+															//
 	short fb_row_stride;								// number of bytes per line of frame buffer
 	short fb_width;
 	short fb_height;
@@ -357,7 +358,7 @@ private:
 														// in complex color mode, fb_row_pointer[y] = frame_buffer + z * fb_row_stride, z is between 0 and fb_height
 
 	uint8_t **dma_row_pointer;					// pointer on start of each line used by the DMA
-														// if a line is in SRAM_U and a 2nd DMA 
+														// if a line is in SRAM_U and a 2nd DMA
 	// user DMA triggers
    short end_of_display_line_dma_num_trigger; // channel to start when Hsync occurs (start or end depending on hsync polarity) (-1 = none)
 	short end_of_vga_image_dma_num_trigger;// channel to start after the last pixel of last visible line on screen	 (-1 = none)
@@ -373,7 +374,7 @@ private:
 	short cursor_y;			// cursor y position in print window in CHARACTER
 	short font_width;
 	short font_height;
-	short print_window_x;	// x position in pixel of text window 
+	short print_window_x;	// x position in pixel of text window
 	short print_window_y;	// y position in pixel of text window
 	short print_window_w;	// text window width in CHARACTER
 	short print_window_h;	// text window height in CHARACTER
@@ -390,7 +391,7 @@ private:
 	uvga_error_t monochrome_dma_init_repeat_1();
 
 	DMABaseClass::TCD_t *dma_append_vsync_tcds(DMABaseClass::TCD_t *cur_tcd);
-	
+
 	void stop();
 	void set_pin_alternate_function_to_FTM(int pin_num);
 	inline int ftm_channel_to_dma_source(short ftm_num, short ftm_channel_num);
@@ -423,7 +424,7 @@ private:
 	{
 		drawLine(x0, y0, x1, y1, color, true);
 	}
-	
+
 	inline void Vscroll(int x, int y, int w, int h, int dy ,int col);
 	inline void Hscroll(int x, int y, int w, int h, int dx ,int col);
 
@@ -465,5 +466,3 @@ extern unsigned char _vga_font8x8[];
 #define UVGA_STATIC_FRAME_BUFFER(fb_name)		DMAMEM uint8_t (fb_name)[UVGA_FB_SIZE(UVGA_HREZ, UVGA_VREZ, UVGA_RPTL, UVGA_TOP_MARGIN, UVGA_BOTTOM_MARGIN)]
 
 #endif
-
-
